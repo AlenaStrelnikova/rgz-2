@@ -14,7 +14,7 @@ def home():
 
     return render_template('base.html', username=username)
 
-# Роут для логина
+# Логин
 @base.route('/login', methods=['GET', 'POST'])
 def login():
     errors = []
@@ -49,7 +49,7 @@ def login():
         
     return render_template('login.html')
 
-
+# Заказы
 @base.route('/orders')
 @login_required
 def orders():
@@ -57,13 +57,13 @@ def orders():
     username = current_user.username
     return render_template('orders.html', orders=my_orders, username=username)
 
-
+# Статус заказа
 @base.route('/order-status/<int:order_id>', methods=['POST'])
 @login_required
 def order_status(order_id):
     errors = []
     order = Order.query.get_or_404(order_id)
-    # Убедитесь, что пользователь имеет право изменить статус
+
     if order.user_id != current_user.id:
             errors.append("У вас нет доступа к этому заказу")
             print(errors)
@@ -76,27 +76,28 @@ def order_status(order_id):
     db.session.commit()
     
     status = 'оплачен' if order.is_paid else 'не оплачен'
-    # return render_template("orders.html", status=status)
+
     return redirect(url_for('base.orders', status=status))
 
 
-
+# Список товаров
 @base.route('/products', methods=['GET', 'POST'])
 @login_required
 def products():
+    # Получаем параметр 'offset' из GET-запроса. Если параметр не указан, то значение по умолчанию равно 0
     offset = int(request.args.get('offset', 0))
     products_per_page = 20
 
-    # all_products = Product.query.all()
     all_products = Product.query.offset(offset).limit(products_per_page).all()
 
     total_products_count = Product.query.count()
     
 
-    # Получаем текущий заказ пользователя в черновике
+    # Получаем текущий заказ пользователя 
     current_order = Order.query.filter_by(user_id=current_user.id, is_paid=False, is_draft=True).first()
+    # Если текущего заказа нет, создаем новый заказ
     if not current_order:
-        # Создаем новый заказ как черновик
+
         current_order = Order(user_id=current_user.id, is_paid=False, is_draft=True)
         db.session.add(current_order)
         db.session.commit()
@@ -107,16 +108,20 @@ def products():
 
 
         if 'quantity' in request.form:
+            # Получаем количество продукта, указанное пользователем
             quantity = int(request.form.get('quantity', 0))
             order_product = OrderProduct.query.filter_by(order_id=current_order.id, product_id=product_id).first()
            
-           
+           # Если товар уже присутствует в заказе и количество продукта и указанное пользователем количество больше 0,
+            # увеличиваем количество заказанного товара и уменьшаем количество продукта на складе
             if order_product and product and quantity > 0:
                 if product.quantity >= quantity:
                     order_product.quantity += quantity
                     product.quantity -= quantity
                     db.session.commit()
 
+            # Если товара нет в заказе и количество продукта и указанное пользователем количество больше 0,
+            # создаем новую запись в таблице OrderProduct и уменьшаем количество продукта на складе
             elif not order_product and product and quantity > 0 and product.quantity >= quantity:
                 new_order_product = OrderProduct(order_id=current_order.id, product_id=product_id, quantity=quantity)
                 product.quantity -= quantity
@@ -124,16 +129,20 @@ def products():
                 db.session.commit()
 
         elif 'remove_quantity' in request.form:
+            # Получаем количество продукта, указанное пользователем для удаления из заказа
             remove_quantity = int(request.form.get('remove_quantity', 0))
             order_product = OrderProduct.query.filter_by(order_id=current_order.id, product_id=product_id).first()
 
             if order_product and product:
-                # Уменьшаем количество товара в корзине
+                # Уменьшаем количество товара в корзине только на указанное количество
                 if order_product.quantity >= remove_quantity:
                     order_product.quantity -= remove_quantity
-                    product.quantity += remove_quantity  # Возвращаем товар на склад
-                    db.session.delete(order_product)  # Удаляем запись о товаре из корзины, если его количество стало равно 0
-                db.session.commit()
+                    product.quantity += remove_quantity
+                    db.session.commit()
+                # Если количество товара в корзине становится равным 0, удаляем запись о товаре из корзины
+                if order_product.quantity == 0:
+                    db.session.delete(order_product)
+                    db.session.commit()
 
     # Подсчитываем оплаченное количество для каждого продукта
     products_with_quantity = []
@@ -152,7 +161,7 @@ def products():
     return render_template('products.html', products=products_with_quantity, current_order=current_order, total_products_count=total_products_count, products_per_page=products_per_page, offset=offset)
 
 
-
+# Формирование накладной
 @base.route('/basket', methods=['GET', 'POST'])
 @login_required
 def basket():
@@ -185,7 +194,7 @@ def basket():
                 order_product = OrderProduct(order_id=current_order.id, product_id=product_id, quantity=quantity)
                 db.session.add(order_product)
 
-        db.session.commit()  # Commit после всех изменений в сессии
+        db.session.commit()
 
     # Формируем список товаров в корзине
     current_order = Order.query.filter_by(user_id=current_user.id, is_paid=False, is_draft=True).first()
@@ -197,7 +206,7 @@ def basket():
     return render_template('basket.html', products=products_in_basket, current_order=current_order)
 
 
-
+# Разлогинивание пользователя
 @base.route('/logout')
 @login_required
 def logout():
@@ -205,6 +214,7 @@ def logout():
     return redirect("/")
 
 
+# Создание заказа
 @base.route('/create_order', methods=['POST'])
 @login_required
 def create_order():
@@ -214,8 +224,6 @@ def create_order():
         # Меняем статус заказа с черновика на подтвержденный, но еще не оплаченный
         current_order.is_draft = False
     
-    # Подтверждаем изменения в базе данных
     db.session.commit()
 
-    # После создания заказа перенаправляем пользователя на страницу с заказами.
     return redirect(url_for('base.orders'))
