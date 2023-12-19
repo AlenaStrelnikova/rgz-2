@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block lab %} База склада бытовой техники {% endblock %}
+
+{% block main %}
+
+<style>
+    table {
+        margin-top: 35px;
+        border-collapse: collapse;
+        width: 30%;
+        color: rgb(5, 95, 5);
+        font-weight: bolder;
+        font-size: larger;
+    }
+
+    td {
+        padding: 10px;
+        border: 1px solid rgb(15, 114, 15);
+    }
+</style>
+    <br><div class="href"><a href="/">Главная страница</a></div>
+    <h1>Заказы {{ username }}:</h1>
+    <table>
+        {% for order in orders %}
+            {% if not order.is_draft %}
+            <tr>
+                <td>Заказ ID: {{ order.id }} - {% if order.is_paid %}Оплачен{% else %}Не оплачен{% endif %}</td>
+                <td>
+                    <!-- Добавьте форму с кнопкой для изменения статуса -->
+                    <form action="{{ url_for('base.order_status', order_id=order.id) }}" method="post">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <button type="submit">Переключить статус</button>
+                    </form>
+                </td>
+            </tr>
+            {% for order_product in order.products %}
+                <tr>
+                    <td>Товар: {{ order_product.product.name }}</td>
+                </tr>
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endblock %}

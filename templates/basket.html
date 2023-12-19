@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block lab %} Корзина {% endblock %}
+
+{% block main %}
+
+<h1>Корзина</h1>
+<table>
+    <tr>
+        <th>Артикул</th>
+        <th>Название</th>
+        <th>Количество</th>
+    </tr>
+    {% set show_button = products|length > 0 %}
+    {% for product, quantity, is_draft in products %}
+        <tr>
+            <td>{{ product.product.code }}</td>
+            <td>{{ product.product.name }}</td>
+            <td>{{ quantity }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% if show_button %}
+    <form method="post" action="{{ url_for('base.create_order') }}">
+        <input type="hidden" name="create_order" value="true">
+        <button type="submit">Создать заказ</button>
+    </form>
+{% else %}
+    <p>Список товаров пока пуст</p>
+{% endif %}
+
+{% endblock %}

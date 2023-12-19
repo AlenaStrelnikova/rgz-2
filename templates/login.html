@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block lab %} База склада бытовой техники {% endblock %}
+
+{% block main %}
+<style>
+    .href{
+        font-size: 20px;
+        padding-top: 30px;
+    }
+    a:link {
+        color: rgb(21, 121, 21);
+        text-decoration: none;
+    }
+    a:visited {
+        color: rgb(7, 102, 7);
+        text-decoration: none;
+    }
+</style>
+    <br><div class="href"><a href="/">Главная страница</a></div>
+
+{% for error in errors %}
+
+<div class="error" style="font-size: 20px;">{{ error }}</div>
+
+{% endfor %}
+
+    <h1>Вход</h1>
+    <h2>Пожалуйста, авторизуйтесь</h2>
+    <div class="error">{{ error }}</div>
+
+    <form method="post">
+        <div>
+            <label for="username">Пользователь:</label>
+            <input type="text" id="username" name="username" value="{{ username or '' }}">
+        </div><br>
+        <div>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" value="{{ password or '' }}">
+        </div><br>
+        <div>
+            <button type="submit">Войти</button>
+            <button type="reset">Отмена</button>
+        </div>
+    </form>
+{% endblock %}

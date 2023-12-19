@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block lab %} База склада бытовой техники {% endblock %}
+
+{% block main %}
+
+<style>
+    table {
+        margin-top: 35px;
+        border-collapse: collapse;
+        width: 50%;
+        color: rgb(5, 95, 5);
+        font-weight: bolder;
+        font-size: larger;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid rgb(15, 114, 15);
+    }
+</style>
+    <br><div class="href"><a href="/">Главная страница</a></div>
+    <h1>Товары на складе:</h1>
+    <table>
+        <tr>
+            <th>Артикул</th>
+            <th>Название</th>
+            <th>Количество</th>
+            <th>Оплачено</th>
+        </tr>
+        {% for product in products %}
+            <tr>
+                <td>{{ product[0].code }}</td>
+                <td>{{ product[0].name }}</td>
+                <td>{{ product[0].quantity }}</td>
+                <td>{{ product[2] }}</td>
+                <td><form method="post" action="{{ url_for('base.products') }}">
+                    <input type="hidden" name="product_id" value="{{ product[0].id }}">
+                    <input type="number" name="quantity" min="0" max="{{ product[0].quantity }}" value="0">
+                    <button type="submit">Добавить в корзину</button>
+                </form></td>
+                {% if product[1] > 0 and current_order.is_draft %}
+                <td>
+                    <form method="post" action="{{ url_for('base.products') }}">
+                        <input type="hidden" name="product_id" value="{{ product[0].id }}">
+                        <input type="number" name="remove_quantity" min="0" max="{{ product[1] }}" value="0">
+                        <button type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
