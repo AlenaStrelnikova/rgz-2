@@ -23,3 +23,29 @@ footer {
     left: 0;
     right: 0;
 }
+.go_to {
+    color: rgb(5, 95, 5);
+    font-weight: bolder;
+    font-size:24px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 160px;
+    margin-right: 50px;
+    text-decoration: none;
+}
+
+.go_to:visited {
+    color: rgb(5, 95, 5); 
+}
+
+.h1 {
+    color: rgb(5, 95, 5);
+    font-weight: bolder;
+    font-size:30px;
+}
+.error {
+    color: rgb(177, 5, 5);
+    font-weight: bolder;
+    font-size:24px;
+}

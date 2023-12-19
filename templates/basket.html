@@ -3,8 +3,37 @@
 {% block lab %} Корзина {% endblock %}
 
 {% block main %}
+<style>
+    table {
+        margin-top: 35px;
+        border-collapse: collapse;
+        width: 30%;
+        color: rgb(5, 95, 5);
+        font-weight: bolder;
+        font-size: larger;
+    }
 
-<h1>Корзина</h1>
+    td {
+        padding: 10px;
+        border: 1px solid rgb(15, 114, 15);
+    }
+    .but {
+        font-size: 18px;
+        font-weight: 600;
+        color: rgb(5, 95, 5);
+        background-color: rgb(214, 255, 214);
+        border: solid 1px;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .but:hover {
+    cursor: pointer;
+}
+</style>
+
+<br><div class="href"><a href="/">Главная страница</a></div>
+<h1 class="h1">Создать накладную</h1>
+<div class="go_to"><a href="/products">К списку товаров</a></div>
 <table>
     <tr>
         <th>Артикул</th>
@@ -19,15 +48,15 @@
             <td>{{ quantity }}</td>
         </tr>
     {% endfor %}
-</table>
+</table><br><br>
 
 {% if show_button %}
     <form method="post" action="{{ url_for('base.create_order') }}">
         <input type="hidden" name="create_order" value="true">
-        <button type="submit">Создать заказ</button>
+        <button type="submit" class="but">Создать заказ</button>
     </form>
 {% else %}
-    <p>Список товаров пока пуст</p>
+    <p style="position: absolute; margin-left: 160px; color: rgb(5, 95, 5); font-size: 18px;">Список товаров пока пуст</p>
 {% endif %}
 
 {% endblock %}

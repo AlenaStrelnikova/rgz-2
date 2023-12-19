@@ -1,7 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for
 from Db import db
 from Db.models import Users, Product, Order, OrderProduct
-# from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, login_required, current_user, logout_user
 
 base = Blueprint('base', __name__)
@@ -35,7 +34,7 @@ def login():
         my_user = Users.query.filter_by(username=username_form).first()
 
         if my_user is not None:
-            if (my_user.password, password_form):
+            if (my_user.password == password_form):
                 login_user(my_user, remember=False)
                 return redirect('/')
             else:
@@ -85,7 +84,14 @@ def order_status(order_id):
 @base.route('/products', methods=['GET', 'POST'])
 @login_required
 def products():
-    all_products = Product.query.all()
+    offset = int(request.args.get('offset', 0))
+    products_per_page = 20
+
+    # all_products = Product.query.all()
+    all_products = Product.query.offset(offset).limit(products_per_page).all()
+
+    total_products_count = Product.query.count()
+    
 
     # Получаем текущий заказ пользователя в черновике
     current_order = Order.query.filter_by(user_id=current_user.id, is_paid=False, is_draft=True).first()
@@ -143,7 +149,7 @@ def products():
 
         products_with_quantity.append((product, quantity_in_basket, paid_quantity))
 
-    return render_template('products.html', products=products_with_quantity, current_order=current_order)
+    return render_template('products.html', products=products_with_quantity, current_order=current_order, total_products_count=total_products_count, products_per_page=products_per_page, offset=offset)
 
 
 
@@ -196,7 +202,7 @@ def basket():
 @login_required
 def logout():
     logout_user()
-    return redirect("/base/")
+    return redirect("/")
 
 
 @base.route('/create_order', methods=['POST'])

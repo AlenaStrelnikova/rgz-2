@@ -18,16 +18,23 @@
         padding: 10px;
         border: 1px solid rgb(15, 114, 15);
     }
+    .product_list {
+        font-weight:400;
+        font-size: 18px;
+    }
 </style>
     <br><div class="href"><a href="/">Главная страница</a></div>
-    <h1>Заказы {{ username }}:</h1>
+    <h1 class="h1">Заказы {{ username }}:</h1>
     <table>
+        <tr>
+            <th>Заказ</th>
+            <th>Статус</th>
+        </tr>
         {% for order in orders %}
             {% if not order.is_draft %}
             <tr>
                 <td>Заказ ID: {{ order.id }} - {% if order.is_paid %}Оплачен{% else %}Не оплачен{% endif %}</td>
                 <td>
-                    <!-- Добавьте форму с кнопкой для изменения статуса -->
                     <form action="{{ url_for('base.order_status', order_id=order.id) }}" method="post">
                         <input type="hidden" name="order_id" value="{{ order.id }}">
                         <button type="submit">Переключить статус</button>
@@ -36,7 +43,7 @@
             </tr>
             {% for order_product in order.products %}
                 <tr>
-                    <td>Товар: {{ order_product.product.name }}</td>
+                    <td class="product_list">Товар: {{ order_product.product.name }} ({{ order_product.quantity }})</td>
                 </tr>
             {% endfor %}
             {% endif %}

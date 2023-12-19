@@ -24,20 +24,35 @@
         color: rgb(7, 102, 7);
         text-decoration: none;
     }
+    .text_hello {
+        color: rgb(7, 102, 7);
+        font-weight:bold;
+        font-size:24px;
+        margin-left: 70px;
+        margin-top: 70px;
+    }
 </style>
 <nav>
     <ul>
-        <li style="margin-top: 20px; margin-right: 380px; margin-left: 90px; font-size: 30px;"><a href="/">База бытовой техники</a></li>
+        <li style="margin-top: 20px; margin-right: 380px; margin-left: 80px; font-size: 35px;"><a href="/">База склада</a></li>
+        <li style="margin-top: 100px; margin-right: 380px; margin-left: 80px; font-size: 23px; position: absolute; font-weight: 500; font-family:Verdana, Geneva, Tahoma, sans-serif"><a href="/">бытовой техники</a></li>
         <li style="margin-right: 180px; font-size: 20px;"><a href="{{ url_for('base.orders') }}">Посмотреть заказы</a></li>
         <li style="margin-right: 380px; font-size: 20px;"><a href="{{ url_for('base.products') }}">Список товаров</a></li>
         <li style="margin-right: 380px; font-size: 20px;"><a href="{{ url_for('base.basket') }}">Создать накладную</a></li>
         {% if current_user.is_authenticated %}
-            <li style="padding:5px; margin-right: 20px; margin-top: 30px; font-size: 20px; border: 1px solid rgb(3, 82, 3); background-color:rgb(223, 255, 223);  border-radius: 10px;"><a href="{{ url_for('base.logout') }}">Выйти</a></li>
-            <li style="font-size: 20px;">{{ username }}</li>
+            <li style="padding:5px; margin-right: -180px; margin-top: 30px; font-size: 20px; border: 1px solid rgb(3, 82, 3); background-color:rgb(223, 255, 223);  border-radius: 10px; margin-bottom: 50px; padding: 10px;"><a href="{{ url_for('base.logout') }}">Выйти</a></li>
+            <li style="font-size: 20px; margin-right: 150px;">{{ username }}</li>
         {% else %}
-            <li style="margin-right: 40px; font-size: 20px;"><a href="{{ url_for('base.login') }}">Логин</a></li>
-            <li style="font-size: 20px;">{{ username }}</li>
+            <li style="margin-right: -180px; font-size: 20px; border: 1px solid rgb(3, 82, 3); background-color:rgb(223, 255, 223);  border-radius: 10px; margin-bottom: 50px; padding: 10px;"><a href="{{ url_for('base.login') }}">Логин</a></li>
+            <li style="font-size: 20px; margin-right: 150px; margin-bottom: 50px;">{{ username }}</li>
         {% endif %}
     </ul>
 </nav>
+<div class="text_hello">Здравствуйте, уважаемые складовщики!</div><br>
+<div style="color: rgb(7, 102, 7); font-size:20px; margin-left: 70px;">На сайте склада бытовой техники вы сможете всегда быть в курсе наличия определенного товара и его количества, отслеживать количество оплаченного
+    товара, создавать накладные и отслеживать (корректировать) статусы заказов. 
+</div><br>
+<div style="margin-left: 700px; width: 500px; height: 400px;">
+    <img src="{{ url_for('static', filename='technica.jpg') }}" width="100%" height="100%">
+</div>
 {% endblock %}

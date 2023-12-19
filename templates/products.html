@@ -8,7 +8,7 @@
     table {
         margin-top: 35px;
         border-collapse: collapse;
-        width: 50%;
+        width: 70%;
         color: rgb(5, 95, 5);
         font-weight: bolder;
         font-size: larger;
@@ -18,15 +18,27 @@
         padding: 10px;
         border: 1px solid rgb(15, 114, 15);
     }
+    .show-more {
+        font-size: 18px;
+        font-weight: 600;
+        color: rgb(5, 95, 5);
+        background-color: rgb(214, 255, 214);
+        border: solid 1px;
+        border-radius: 5px;
+        padding: 10px;
+        margin-right: 1740px;
+    }
 </style>
     <br><div class="href"><a href="/">Главная страница</a></div>
-    <h1>Товары на складе:</h1>
+    <h1 class="h1">Товары на складе:</h1>
+    <div class="go_to"><a href="/basket">Создать накладную</a></div>
     <table>
         <tr>
             <th>Артикул</th>
             <th>Название</th>
             <th>Количество</th>
             <th>Оплачено</th>
+            <th>Действие</th>
         </tr>
         {% for product in products %}
             <tr>
@@ -50,6 +62,12 @@
                 {% endif %}
             </tr>
         {% endfor %}
-    </table>
+    </table><br><br>
+
+    {% if offset + products_per_page < total_products_count %}
+        <div class="show-more">
+            <a href="{{ url_for('base.products', offset=offset+products_per_page) }}">Показать ещё</a>
+        </div>
+    {% endif %}
 
 {% endblock %}
